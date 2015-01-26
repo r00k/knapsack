@@ -15,7 +15,16 @@
 ;     for each collection
 ;       add each item
 
-(declare matches-target?)
+(defn- total-cost [menu order]
+  (let [amounts (map menu order)]
+    (reduce + amounts)))
+
+(defn matches-target? [menu target order]
+  (= (total-cost menu order)
+     target))
+
+(defn over-target? [menu target order]
+  (> (total-cost menu order) target))
 
 (defn generate-candidate-orders
   [menu order]
@@ -27,11 +36,6 @@
   (set
     (mapcat (partial generate-candidate-orders menu)
             orders)))
-
-(defn over-target? [menu target order]
-  (let [amounts (map menu order)
-        total (reduce + amounts)]
-    (> total target)))
 
 (defn no-orders-can-accept-additional-item?
   [menu target orders]
@@ -45,7 +49,7 @@
   (loop [orders orders]
     (if (no-orders-can-accept-additional-item? menu target orders)
       (filter matches-target? orders)
-      (recur (generate-candidate-orders menu target orders)))))
+      (recur (generate-all-candidate-orders menu orders)))))
 
 (defn solve [menu target]
   ; generate initial collections

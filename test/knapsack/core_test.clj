@@ -3,13 +3,10 @@
   (:require [clojure.test :refer :all]
             [knapsack.core :refer :all]))
 
-#_(deftest end-to-end
-    (testing "A simple end-to-end example"
-      (let [menu {:soup 1, :steak 2}
-            target 3]
-        (is (= #{[:soup :soup :soup]
-                 [:steak :soup]}
-               (solve menu target))))))
+#_(facts "An end-to-end test"
+         (let [menu {:soup 1, :steak 2}
+               target 3]
+           (solve menu target) => #{[:soup :soup :soup] [:steak :soup]}))
 
 (fact "initial-collections returns each item from menu"
       (generate-initial-collections {:soup 1, :steak 2}) => #{[:soup] [:steak]})
@@ -48,3 +45,11 @@
                                                                   [:b :a]
                                                                   [:b :b]
                                                                   [:b :c]}))))
+
+(facts "matches-target?"
+       (let [menu {:a 1, :b 2, :c 3}
+             target 3]
+         (matches-target? menu target [:a]) => false
+         (matches-target? menu target [:a :b]) => true
+         (matches-target? menu target [:c]) => true
+         (matches-target? menu target [:a :a :a]) => true))
