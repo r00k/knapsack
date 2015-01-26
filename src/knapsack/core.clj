@@ -26,16 +26,15 @@
 (defn over-target? [menu target order]
   (> (total-cost menu order) target))
 
-(defn generate-candidate-orders
+(defn- generate-sorted-candidate-orders
   [menu order]
-  (map (fn [item] (conj order item))
+  (map (fn [item] (sort (conj order item)))
        (keys menu)))
 
 (defn generate-all-candidate-orders
   [menu orders]
-  (set
-    (mapcat (partial generate-candidate-orders menu)
-            orders)))
+  (set (mapcat (partial generate-sorted-candidate-orders menu)
+               orders)))
 
 (defn no-orders-can-accept-additional-item?
   [menu target orders]
@@ -46,10 +45,13 @@
   (set (map vector (keys menu))))
 
 (defn solve-helper [menu target orders]
-  (loop [orders orders]
+  (loop [orders orders matched-orders #{}]
     (if (no-orders-can-accept-additional-item? menu target orders)
-      (filter matches-target? orders)
-      (recur (generate-all-candidate-orders menu orders)))))
+      (into matched-orders (filter (partial matches-target? menu target)
+                                   orders))
+      (recur (generate-all-candidate-orders menu orders)
+             (into matched-orders
+                   (filter (partial matches-target? menu target) orders))))))
 
 (defn solve [menu target]
   ; generate initial collections

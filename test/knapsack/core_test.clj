@@ -3,7 +3,7 @@
   (:require [clojure.test :refer :all]
             [knapsack.core :refer :all]))
 
-#_(facts "An end-to-end test"
+(facts "An end-to-end test"
          (let [menu {:soup 1, :steak 2}
                target 3]
            (solve menu target) => #{[:soup :soup :soup] [:steak :soup]}))
@@ -27,22 +27,16 @@
       (over-target? {:steak 2} 3 [:steak :steak]) => true
       (over-target? {:steak 2} 3 [:steak]) => false)
 
-(facts "generate-candidate-orders"
-       (let [menu {:a 1, :b 2, :c 3}
-             order [:a]]
-         (fact
-           (sort (generate-candidate-orders menu order)) =>
-           (sort [[:a :a] [:a :b] [:a :c]]))))
-
 (facts "generate-all-candidate-orders"
-       (fact "it generates the next possible orders for all orders"
+       (fact "it generates the next possible orders for all orders, but does
+             not include different permutations (only return one of [:a :b] and
+             [:b :a])"
              (let [menu {:a 1, :b 2, :c 3}
                    orders #{[:a] [:b]}]
                (fact
                  (generate-all-candidate-orders menu orders) => #{[:a :a]
                                                                   [:a :b]
                                                                   [:a :c]
-                                                                  [:b :a]
                                                                   [:b :b]
                                                                   [:b :c]}))))
 
