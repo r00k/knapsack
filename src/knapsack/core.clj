@@ -19,9 +19,14 @@
 
 (defn generate-candidate-orders
   [menu order]
+  (map (fn [item] (conj order item))
+       (keys menu)))
+
+(defn generate-all-candidate-orders
+  [menu orders]
   (set
-    (map (fn [item] (conj order item))
-         (keys menu))))
+    (mapcat (partial generate-candidate-orders menu)
+            orders)))
 
 (defn over-target? [menu target order]
   (let [amounts (map menu order)
@@ -29,9 +34,9 @@
     (> total target)))
 
 (defn no-orders-can-accept-additional-item?
-  [menu target orders order-generator]
-  (let [new-orders (order-generator menu orders)]
-    (every? (over-target? menu target new-orders))))
+  [menu target orders]
+  (let [new-orders (generate-all-candidate-orders menu orders)]
+    (every? (partial over-target? menu target) new-orders)))
 
 (defn generate-initial-collections [menu]
   (set (map vector (keys menu))))
