@@ -16,7 +16,12 @@
 ;       add each item
 
 (declare matches-target?)
-(declare generate-candidate-orders)
+
+(defn generate-candidate-orders
+  [menu order]
+  (set
+    (map (fn [item] (conj order item))
+         (keys menu))))
 
 (defn over-target? [menu target order]
   (let [amounts (map menu order)
